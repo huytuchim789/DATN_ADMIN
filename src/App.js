@@ -1,40 +1,30 @@
-import * as React from 'react'
-import { Link, Routes, Route, BrowserRouter } from 'react-router-dom'
+import { Routes, Route, Link, BrowserRouter } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import NotFound from './components/NotFound';
+import Login from './pages/Login';
+import './sass/app.scss';
+import { Layout, Menu } from 'antd';
+import Home from './pages/Home';
+import PrivateRouter from './components/PrivateRouter';
 
-const Home = () => <h1>Home (Public)</h1>
-const Pricing = () => <h1>Pricing (Public)</h1>
-
-const Dashboard = () => <h1>Dashboard (Private)</h1>
-const Settings = () => <h1>Settings (Private)</h1>
-
-const Login = () => <h1>TODO</h1>
-
-function Nav() {
-  return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/pricing">Pricing</Link>
-        </li>
-      </ul>
-    </nav>
-  )
-}
-
-export default function App() {
+const App = () => {
   return (
     <BrowserRouter>
-      <Nav />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/home">
+          <Route
+            path=""
+            element={
+              <PrivateRouter>
+                <Home />
+              </PrivateRouter>
+            }
+          />
+        </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
-  )
-}
+  );
+};
+export default App;
