@@ -1,14 +1,16 @@
-import React, { Children } from 'react';
-import { Layout, Menu } from 'antd';
-import Navigation from './Navigation';
-const { Header, Sider, Content } = Layout;
+import React, { Children, useContext } from 'react'
+import { Layout, Menu } from 'antd'
+import Navigation from './Navigation'
+import { UserContext } from '../context/AuthContext'
+import Login from '../pages/Login'
+import { Navigate } from 'react-router-dom'
+const { Header, Sider, Content } = Layout
 
 const PrivateRouter = ({ children }) => {
-  return (
-    <>
-      <Navigation content={children} />
-    </>
-  );
-};
+  const [auth, setAuth] = useContext(UserContext)
+  console.log(Boolean(auth))
 
-export default PrivateRouter;
+  return <>{auth ? <Navigation content={children} /> : <Navigate to="/" />}</>
+}
+
+export default PrivateRouter

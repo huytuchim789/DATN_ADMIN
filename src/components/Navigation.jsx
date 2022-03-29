@@ -1,35 +1,47 @@
-import { Layout, Menu } from 'antd';
+import { Layout, Menu } from 'antd'
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
-} from '@ant-design/icons';
-import { useState } from 'react';
-const { Header, Sider, Content } = Layout;
-
+} from '@ant-design/icons'
+import { useState } from 'react'
+const { Header, Sider, Content } = Layout
+const nav = [
+  {
+    key: 1,
+    icon: <UserOutlined />,
+    text: 'Thành Phố',
+  },
+  {
+    key: 2,
+    icon: <VideoCameraOutlined />,
+    text: 'Người Dùng',
+  },
+  {
+    key: 3,
+    icon: <UploadOutlined />,
+    text: 'User',
+  },
+]
 const Navigation = ({ content }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false)
 
   const toggle = () => {
-    setCollapsed(!collapsed);
-  };
+    setCollapsed(!collapsed)
+  }
 
   return (
     <Layout className="layout">
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="logo" />
         <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-          <Menu.Item key="1" icon={<UserOutlined />}>
-            nav 1
-          </Menu.Item>
-          <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-            nav 2
-          </Menu.Item>
-          <Menu.Item key="3" icon={<UploadOutlined />}>
-            nav 3
-          </Menu.Item>
+          {nav.map((e, index) => (
+            <Menu.Item key={e.key} icon={e.icon}>
+              {e.text}
+            </Menu.Item>
+          ))}
         </Menu>
       </Sider>
       <Layout className="site-layout">
@@ -52,6 +64,6 @@ const Navigation = ({ content }) => {
         </Content>
       </Layout>
     </Layout>
-  );
-};
-export default Navigation;
+  )
+}
+export default Navigation

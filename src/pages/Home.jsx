@@ -1,8 +1,9 @@
-import React from 'react';
-import { Layout, Menu } from 'antd';
-
+import React from 'react'
+import { Layout, Menu } from 'antd'
+import axios from 'axios'
 const Home = () => {
-  return <div>Home</div>;
-};
+  console.log(axios)
+  return <div>Home</div>
+}
 
-export default Home;
+export default Home
