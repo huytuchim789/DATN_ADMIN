@@ -8,15 +8,16 @@ import { Button } from 'antd'
 import { login } from '../../api/Login'
 import { UserContext } from '../../context/AuthContext'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Typography, Divider, message, Spin, Empty } from 'antd'
+import { Typography, Divider, message, Spin, Empty, Skeleton } from 'antd'
 import { createCity, getCity } from '../../api/Cities'
 
 const { Title } = Typography
 const EditCity = () => {
   let { id } = useParams()
 
-  const [loading, setLoading] = useState(false)
-  const [data, setData] = useState()
+  const [loading, setLoading] = useState(true)
+  const [spinning, setSpinning] = useState(false)
+  const [data, setData] = useState({})
   useEffect(() => {
     setLoading(true)
     getCity(id)
@@ -27,15 +28,15 @@ const EditCity = () => {
       })
       .catch((err) => {
         setLoading(false)
-        setData({})
+        setData(null)
       })
   }, [])
 
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
-      name: '',
-      groupID: '',
+      name: data.name,
+      groupID: data.facebook_group_id,
     },
 
     validationSchema: Yup.object({
@@ -64,10 +65,10 @@ const EditCity = () => {
   })
   return (
     <>
-      {Object.keys(data || {}).length === 0 ? (
-        <Empty />
-      ) : (
-        <Spin tip="Loading..." spinning={loading}>
+      {loading ? (
+        <Skeleton />
+      ) : data ? (
+        <Spin spinning={spinning}>
           <div className="cities__create">
             <header>
               <Title level={1}>Sửa thành phố</Title>
@@ -133,6 +134,8 @@ const EditCity = () => {
             </form>
           </div>
         </Spin>
+      ) : (
+        <Empty />
       )}
     </>
   )
