@@ -9,6 +9,8 @@ import PrivateRouter from './components/PrivateRouter'
 import Cities from './pages/Cities'
 import CityCreate from './pages/Cities/create'
 import EditCity from './pages/Cities/edit'
+import Users from './pages/Users'
+import EditUser from './pages/Users/edit'
 
 const App = () => {
   return (
@@ -16,14 +18,14 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/home">
-          <Route
-            path=""
+          {/* <Route
+            index
             element={
               <PrivateRouter>
-                <Home />
+                <Cities />
               </PrivateRouter>
             }
-          />
+          /> */}
           <Route path="cities">
             <Route
               path=""
@@ -46,6 +48,24 @@ const App = () => {
               element={
                 <PrivateRouter>
                   <EditCity />
+                </PrivateRouter>
+              }
+            />
+          </Route>
+          <Route path="users">
+            <Route
+              path=""
+              element={
+                <PrivateRouter>
+                  <Users />
+                </PrivateRouter>
+              }
+            ></Route>
+            <Route
+              path="edit/:id"
+              element={
+                <PrivateRouter>
+                  <EditUser />
                 </PrivateRouter>
               }
             />

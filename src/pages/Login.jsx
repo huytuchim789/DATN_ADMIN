@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { Input } from 'antd'
@@ -6,7 +6,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'
 import { Button } from 'antd'
 import logo from './../resources/images/admin.png'
 import { login } from '../api/Login'
-import { message } from 'antd'
+import { message, Spin } from 'antd'
 import { UserContext } from '../context/AuthContext'
 import { Navigate, useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -14,6 +14,7 @@ const Login = () => {
   const navigate = useNavigate()
 
   const [auth, setAuth] = useContext(UserContext)
+  const [spinning, setSpinning] = useState(false)
 
   const formik = useFormik({
     initialValues: {
@@ -34,16 +35,23 @@ const Login = () => {
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: (values, { validate }) => {
+      setSpinning(true)
       const { phoneNumber, password } = values
       login(phoneNumber, password)
         .then((res) => {
+          setSpinning(false)
           setAuth(res.data.data)
           localStorage.setItem('auth', JSON.stringify(res.data.data))
-          console.log(res.data.data)
-
+          axios.defaults.headers.common = {
+            Authorization: `bearer ${
+              JSON.parse(localStorage.getItem('auth')).access_token
+            }`,
+          }
           navigate('/home')
         })
         .catch((err) => {
+          setSpinning(false)
+
           if (err.response.status === 401) {
             message.error('SĐT hoặc mật khẩu không đúng')
           } else if (err.response.status === 403) {
@@ -55,7 +63,7 @@ const Login = () => {
     },
   })
   return (
-    <>
+    <Spin spinning={spinning}>
       {!auth ? (
         <div className="login">
           <img src={logo} alt="" />
@@ -102,9 +110,9 @@ const Login = () => {
           </form>
         </div>
       ) : (
-        <Navigate to="/home" />
+        <Navigate to="/home/cities" />
       )}
-    </>
+    </Spin>
   )
 }
 export default Login

@@ -8,11 +8,20 @@ import { Button } from 'antd'
 import { login } from '../../api/Login'
 import { UserContext } from '../../context/AuthContext'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Typography, Divider, message, Spin, Empty, Skeleton } from 'antd'
-import { createCity, getCity, updateCity } from '../../api/Cities'
+import {
+  Typography,
+  Divider,
+  message,
+  Spin,
+  Empty,
+  Skeleton,
+  Select,
+} from 'antd'
+import { getUser, updateUser } from '../../api/Users'
 
 const { Title } = Typography
-const EditCity = () => {
+const { Option } = Select
+const EditUser = () => {
   let { id } = useParams()
 
   const [loading, setLoading] = useState(true)
@@ -20,7 +29,7 @@ const EditCity = () => {
   const [data, setData] = useState({})
   useEffect(() => {
     setLoading(true)
-    getCity(id)
+    getUser(id)
       .then((res) => {
         setLoading(false)
         setData(res.data.data)
@@ -31,28 +40,33 @@ const EditCity = () => {
         setData(null)
       })
   }, [])
-
+  const handleSelectChange = (e) => {
+    formik.setFieldValue('role', e)
+  }
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
       name: data.name,
-      groupID: data.facebook_group_id,
+      phoneNumber: data.phone_number,
+      role: data.role,
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
+      phoneNumber: Yup.string()
+        .min(10, 'Số điện thoại phải hơn 10 kí tự')
+        .max(100, 'SĐT không được quá 100 kí tự')
+        .required('Bạn chưa nhập sđt'),
       name: Yup.string()
-        .required('Bạn chưa tên thành phố')
-        .max(100, 'Tên thành phố không được quá 100 kí tự'),
-      groupID: Yup.string()
-        .required('Bạn chưa nhập groupID')
-        .max(100, 'groupID Không được quá 100 kí tự'),
+        .required('Bạn chưa nhập tên user')
+        .max(100, 'Tên user không được quá 100 kí tự'),
     }),
     validateOnChange: false,
     validateOnBlur: false,
     onSubmit: (values, { validate }) => {
       setSpinning(true)
-      const { name, groupID } = values
-      updateCity(id, name, groupID)
+      const { name, phoneNumber, role } = values
+      console.log(values)
+      updateUser(id, name, phoneNumber, role)
         .then((res) => {
           setSpinning(false)
           message.success('Sửa thành công')
@@ -60,6 +74,7 @@ const EditCity = () => {
         })
         .catch((err) => {
           message.error('Sửa thất bại')
+          navigate(-1)
         })
     },
   })
@@ -71,19 +86,35 @@ const EditCity = () => {
         <Spin spinning={spinning}>
           <div className="cities__create">
             <header>
-              <Title level={1}>Sửa thành phố</Title>
+              <Title level={1}>Sửa Người Dùng</Title>
             </header>
             <form
               onSubmit={formik.handleSubmit}
               className="cities__create__form"
             >
+              <Title level={4} htmlFor="">
+                Số Điện Thoại
+              </Title>
+              <Input
+                id="phone"
+                name="phoneNumber"
+                placeholder="Tên Người Dùng"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.phoneNumber}
+              />
+              {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
+                <div className="error-message">{formik.errors.phoneNumber}</div>
+              ) : null}
               <Title level={4} htmlFor="name">
-                Tên Thành Phố
+                Tên Người Dùng
               </Title>
               <Input
                 id="name"
                 name="name"
-                placeholder="Tên Thành Phố"
+                placeholder="Tên Người Dùng"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
@@ -93,24 +124,44 @@ const EditCity = () => {
               {formik.touched.name && formik.errors.name ? (
                 <div className="error-message">{formik.errors.name}</div>
               ) : null}
-              <Title level={4} htmlFor="name">
-                Group Facebook ID
+              <Title level={4} htmlFor="role">
+                Quyền
               </Title>
-              <Input
-                id="groupID"
-                name="groupID"
+              <Select
+                value={formik.values.role}
+                style={{ width: 120 }}
+                id="role"
+                name="role"
+                size="large"
+                onChange={handleSelectChange}
+                // onBlur={formik.handleBlur}
+              >
+                <Option value="admin">Admin</Option>
+                <Option value="member">Member</Option>
+                <Option value="user">User</Option>
+              </Select>
+              {formik.touched.name && formik.errors.name ? (
+                <div className="error-message">{formik.errors.name}</div>
+              ) : null}
+
+              {/* <Title level={4} htmlFor="password">
+                Password
+              </Title>
+              <Input.Password
+                id="password"
+                name="password"
                 placeholder="Group Facebook ID"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.groupID}
+                value={formik.values.password}
                 iconRender={(visible) =>
                   visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                 }
               />
               {formik.touched.groupID && formik.errors.groupID ? (
                 <div className="error-message">{formik.errors.groupID}</div>
-              ) : null}
+              ) : null} */}
               <Space style={{ marginTop: '30px' }}>
                 <Button
                   className="save_btn"
@@ -140,4 +191,4 @@ const EditCity = () => {
     </>
   )
 }
-export default EditCity
+export default EditUser

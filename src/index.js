@@ -5,8 +5,10 @@ import reportWebVitals from './reportWebVitals'
 import 'antd/dist/antd.css' // or 'antd/dist/antd.less'
 import axios from 'axios'
 import AuthProvider from './context/AuthContext'
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api/admin'
+axios.defaults.baseURL = `${process.env.REACT_APP_API_URL}/api/admin`
+console.log(process.env)
 if (JSON.parse(localStorage.getItem('auth'))) {
+  console.log('in')
   axios.defaults.headers.common = {
     Authorization: `bearer ${
       JSON.parse(localStorage.getItem('auth')).access_token

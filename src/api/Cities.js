@@ -8,3 +8,6 @@ export const createCity = (name, groupID) => {
 export const getCity = (id) => {
   return axios.get(`./cities/edit/${id}`)
 }
+export const updateCity = (id, name, groupID) => {
+  return axios.post(`./cities/edit/${id}`, { name, group_id: groupID })
+}
