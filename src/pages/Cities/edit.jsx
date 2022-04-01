@@ -1,77 +1,108 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Input, Space } from 'antd'
+import { Input, Space, Select } from 'antd'
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'
 import { Button } from 'antd'
 
 import { login } from '../../api/Login'
 import { UserContext } from '../../context/AuthContext'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Typography, Divider, message, Spin, Empty, Skeleton } from 'antd'
-import { createCity, getCity, updateCity } from '../../api/Cities'
+import { Typography, Divider, message, Spin, Modal, Skeleton } from 'antd'
+import { createCity, getCity } from '../../api/Cities'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { set } from 'date-fns'
 
 const { Title } = Typography
-const EditCity = () => {
-  let { id } = useParams()
+const { Option } = Select
 
-  const [loading, setLoading] = useState(true)
-  const [spinning, setSpinning] = useState(false)
+const CityCreate = () => {
+  let { id } = useParams()
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState({})
+  const [ske, setSke] = useState(false)
+  // const renderOptions = (e) => {
+  //   e.push(<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>)
+  // }
+  function handleChange(value) {
+    formik.setFieldValue('groupID', value)
+  }
   useEffect(() => {
-    setLoading(true)
+    setSke(true)
     getCity(id)
       .then((res) => {
-        setLoading(false)
+        setSke(false)
+        console.log(res.data)
         setData(res.data.data)
-        console.log(res)
       })
       .catch((err) => {
-        setLoading(false)
-        setData(null)
+        console.log(err)
       })
   }, [])
-
+  function showConfirm(values) {
+    Modal.confirm({
+      title: 'Xác Nhận',
+      icon: <ExclamationCircleOutlined />,
+      content:
+        'Hãy đảm bảo ID là một ID của group. Bạn có chắc chắn muốn thêm? ',
+      onOk() {
+        formik
+          .submitForm()
+          .then(() => {
+            const { name, groupID } = formik.values
+            console.log(name)
+            setLoading(true)
+            createCity(name, groupID)
+              .then((res) => {
+                setLoading(false)
+                message.success('Thêm mới thành công')
+                navigate(-1)
+                console.log(res)
+              })
+              .catch((err) => {
+                message.error('Thêm mới thất bại')
+                navigate(-1)
+              })
+          })
+          .catch((e) => {
+            console.log(e)
+            setLoading(false)
+          })
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
+  }
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
       name: data.name,
-      groupID: data.facebook_group_id,
+      groupID: data.groups ? data.groups.map((g) => g.facebook_group_id) : [],
     },
     enableReinitialize: true,
+
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Bạn chưa tên thành phố')
         .max(100, 'Tên thành phố không được quá 100 kí tự'),
-      groupID: Yup.string()
-        .required('Bạn chưa nhập groupID')
-        .max(100, 'groupID Không được quá 100 kí tự'),
+      groupID: Yup.array().min(1, 'Bạn chưa nhập groupID'),
     }),
-    validateOnChange: false,
+    validateOnChange: true,
     validateOnBlur: false,
     onSubmit: (values, { validate }) => {
-      setSpinning(true)
-      const { name, groupID } = values
-      updateCity(id, name, groupID)
-        .then((res) => {
-          setSpinning(false)
-          message.success('Sửa thành công')
-          navigate(-1)
-        })
-        .catch((err) => {
-          message.error('Sửa thất bại')
-        })
+      // showConfirm(values, validate)
     },
   })
   return (
     <>
-      {loading ? (
+      {ske ? (
         <Skeleton />
-      ) : data ? (
-        <Spin spinning={spinning}>
+      ) : (
+        <Spin tip="Loading..." spinning={loading}>
           <div className="cities__create">
             <header>
-              <Title level={1}>Sửa thành phố</Title>
+              <Title level={1}>Sửa Thành Phố</Title>
             </header>
             <form
               onSubmit={formik.handleSubmit}
@@ -94,20 +125,34 @@ const EditCity = () => {
                 <div className="error-message">{formik.errors.name}</div>
               ) : null}
               <Title level={4} htmlFor="name">
-                Group Facebook ID
+                Groups Facebook ID
               </Title>
-              <Input
+              {/* <Input
+            id="groupID"
+            name="groupID"
+            placeholder="Group Facebook ID"
+            size="large"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.groupID}
+            iconRender={(visible) =>
+              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+            }
+          /> */}
+              <Select
+                mode="tags"
+                style={{ width: '100%' }}
+                placeholder="Groups ID"
+                size="large"
                 id="groupID"
                 name="groupID"
-                placeholder="Group Facebook ID"
-                size="large"
-                onChange={formik.handleChange}
+                onChange={handleChange}
                 onBlur={formik.handleBlur}
                 value={formik.values.groupID}
-                iconRender={(visible) =>
-                  visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-                }
-              />
+                open={false}
+              >
+                {/* {children} */}
+              </Select>
               {formik.touched.groupID && formik.errors.groupID ? (
                 <div className="error-message">{formik.errors.groupID}</div>
               ) : null}
@@ -115,8 +160,9 @@ const EditCity = () => {
                 <Button
                   className="save_btn"
                   type="primary"
-                  htmlType="submit"
+                  // htmlType="submit"
                   size="large"
+                  onClick={showConfirm}
                 >
                   Lưu
                 </Button>
@@ -134,10 +180,8 @@ const EditCity = () => {
             </form>
           </div>
         </Spin>
-      ) : (
-        <Empty />
       )}
     </>
   )
 }
-export default EditCity
+export default CityCreate

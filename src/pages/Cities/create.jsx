@@ -1,49 +1,84 @@
 import React, { useContext, useState } from 'react'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { Input, Space } from 'antd'
+import { Input, Space, Select } from 'antd'
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'
 import { Button } from 'antd'
 
 import { login } from '../../api/Login'
 import { UserContext } from '../../context/AuthContext'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { Typography, Divider, message, Spin } from 'antd'
+import { Typography, Divider, message, Spin, Modal } from 'antd'
 import { createCity } from '../../api/Cities'
+import { ExclamationCircleOutlined } from '@ant-design/icons'
 
 const { Title } = Typography
+const { Option } = Select
+
 const CityCreate = () => {
   const [loading, setLoading] = useState(false)
+  const children = []
+  for (let i = 10; i < 36; i++) {
+    children.push(
+      <Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>
+    )
+  }
 
+  function handleChange(value) {
+    formik.setFieldValue('groupID', value)
+  }
+  function showConfirm(values) {
+    Modal.confirm({
+      title: 'Xác Nhận',
+      icon: <ExclamationCircleOutlined />,
+      content:
+        'Hãy đảm bảo ID là một ID của group. Bạn có chắc chắn muốn thêm? ',
+      onOk() {
+        formik
+          .submitForm()
+          .then(() => {
+            const { name, groupID } = formik.values
+            console.log(name)
+            setLoading(true)
+            createCity(name, groupID)
+              .then((res) => {
+                setLoading(false)
+                message.success('Thêm mới thành công')
+                navigate(-1)
+                console.log(res)
+              })
+              .catch((err) => {
+                message.error('Thêm mới thất bại')
+                navigate(-1)
+              })
+          })
+          .catch((e) => {
+            console.log(e)
+            setLoading(false)
+          })
+      },
+      onCancel() {
+        console.log('Cancel')
+      },
+    })
+  }
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
       name: '',
-      groupID: '',
+      groupID: [],
     },
 
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Bạn chưa tên thành phố')
         .max(100, 'Tên thành phố không được quá 100 kí tự'),
-      groupID: Yup.string()
-        .required('Bạn chưa nhập groupID')
-        .max(100, 'groupID Không được quá 100 kí tự'),
+      groupID: Yup.array().min(1, 'Bạn chưa nhập groupID'),
     }),
-    validateOnChange: false,
+    validateOnChange: true,
     validateOnBlur: false,
     onSubmit: (values, { validate }) => {
-      setLoading(true)
-      const { name, groupID } = values
-      createCity(name, groupID)
-        .then((res) => {
-          setLoading(false)
-          message.success('Thêm mới thành công')
-          navigate(-1)
-        })
-        .catch((err) => {
-          message.error('Thêm mới thất bại')
-        })
+      // showConfirm(values, validate)
     },
   })
   return (
@@ -70,9 +105,9 @@ const CityCreate = () => {
             <div className="error-message">{formik.errors.name}</div>
           ) : null}
           <Title level={4} htmlFor="name">
-            Group Facebook ID
+            Groups Facebook ID
           </Title>
-          <Input
+          {/* <Input
             id="groupID"
             name="groupID"
             placeholder="Group Facebook ID"
@@ -83,7 +118,21 @@ const CityCreate = () => {
             iconRender={(visible) =>
               visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
             }
-          />
+          /> */}
+          <Select
+            mode="tags"
+            style={{ width: '100%' }}
+            placeholder="Groups ID"
+            size="large"
+            id="groupID"
+            name="groupID"
+            onChange={handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.groupID}
+            open={false}
+          >
+            {children}
+          </Select>
           {formik.touched.groupID && formik.errors.groupID ? (
             <div className="error-message">{formik.errors.groupID}</div>
           ) : null}
@@ -91,8 +140,9 @@ const CityCreate = () => {
             <Button
               className="save_btn"
               type="primary"
-              htmlType="submit"
+              // htmlType="submit"
               size="large"
+              onClick={showConfirm}
             >
               Lưu
             </Button>

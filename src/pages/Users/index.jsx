@@ -1,16 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Table, Space, Button } from 'antd'
-import { getUsers } from '../../api/Users'
+import { Table, Space, Button, Input, Tag } from 'antd'
+import { findUser, getUsers } from '../../api/Users'
 import { Link } from 'react-router-dom'
 import { Typography, Divider } from 'antd'
-const { Title } = Typography
+import { DebounceInput } from 'react-debounce-input'
+import {
+  SearchOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  UsergroupDeleteOutlined,
+} from '@ant-design/icons'
+import Countdown from 'react-countdown'
+import { getTimeRangeMilliseconds } from './../../utils/getTimeRange'
 
+const { Title } = Typography
+const { Search } = Input
 const columns = [
   {
     title: 'Số Điện Thoại',
     dataIndex: 'phone_number',
     width: '20%',
+    // filterDropdown: () => {
+    //   return (
+
+    //   )
+    // },
+    // filterIcon: () => {
+    //   return <SearchOutlined className="icon-antd" />
+    // },
   },
   {
     title: 'Tên',
@@ -21,11 +39,65 @@ const columns = [
     title: 'Quyền',
     dataIndex: 'role',
     width: '20%',
+    filters: [
+      { text: 'Admin', value: 'admin' },
+      { text: 'Member', value: 'member' },
+      { text: 'User', value: 'user' },
+    ],
   },
   {
-    title: 'Ngày Đăng Ký',
-    dataIndex: 'created_at',
+    title: 'Thời Hạn',
+    dataIndex: 'expires_at',
     width: '20%',
+    render: (text, record) => {
+      return (
+        <Countdown
+          date={Date.now() + getTimeRangeMilliseconds(record.expires_at)}
+          renderer={({ days, hours, minutes, seconds }) => {
+            if (record.role === 'member')
+              return (
+                <Tag icon={<CheckCircleOutlined />} color="success">
+                  Đã Kích Hoạt
+                </Tag>
+              )
+            else if (
+              record.role === 'user' &&
+              getTimeRangeMilliseconds(record.expires_at) === 0
+            ) {
+              return (
+                <Tag icon={<CloseCircleOutlined />} color="error">
+                  Đã Hết Hạn
+                </Tag>
+              )
+            } else if (record.role === 'admin') {
+              return (
+                <Tag color="cyan" icon={<UsergroupDeleteOutlined />}>
+                  admin
+                </Tag>
+              )
+            }
+            return (
+              <div className="datetime_countdown">
+                <div className="datetime_item">
+                  <span
+                    className="datetime_value"
+                    style={{ color: days < 3 ? 'red' : 'initial' }}
+                  >
+                    {days}{' '}
+                  </span>
+                  <span
+                    className="datetime_label"
+                    style={{ color: days < 3 ? 'red' : 'initial' }}
+                  >
+                    Ngày
+                  </span>
+                </div>
+              </div>
+            )
+          }}
+        />
+      )
+    },
   },
   {
     title: 'Hành Động',
@@ -38,7 +110,9 @@ const columns = [
               <Button type="primary">Sửa</Button>
             </Link>
             <Link to={`delete/${record.id}`}>
-              <Button type="danger">Xóa</Button>
+              <Button type="danger" disabled>
+                Xóa
+              </Button>
             </Link>
           </>
         ) : null}
@@ -50,33 +124,45 @@ function Users(props) {
   const [data, setData] = useState([])
   const [pagination, setPagination] = useState({ current: 1, pageSize: 0 })
   const [loading, setLoading] = useState(false)
+  const [search, setSearch] = useState('')
   useEffect(() => {
     setLoading(true)
     getUsers(pagination.current).then((res) => {
-      console.log(res.data.data)
       setData(res.data.data)
       setLoading(false)
-      setPagination({ ...pagination, pageSize: res.data.data.length })
+      setPagination({
+        ...pagination,
+        current: res.data.current,
+        pageSize: res.data.per_page,
+        total: res.data.total,
+      })
     })
   }, [])
-  const handleTableChange = (pagination, filters, sorter) => {
-    // this.fetch({
-    //   sortField: sorter.field,
-    //   sortOrder: sorter.order,
-    //   pagination,
-    //   ...filters,
-    // })
+  let handleTableChange = useCallback((pagination, filters, sorter) => {
     setLoading(true)
+    console.log(search)
+    if (search) {
+      findUser(search, pagination.current)
+        .then((res) => {
+          console.log('search')
+
+          setLoading(false)
+          setData(res.data.data)
+        })
+        .catch((e) => {
+          console.log(e)
+        })
+    }
     getUsers(pagination.current)
       .then((res) => {
+        console.log('frist')
         setLoading(false)
         setData(res.data.data)
-        console.log(res)
       })
       .catch((e) => {
         console.log(e)
       })
-  }
+  })
   return (
     <div className="cities">
       <header>
@@ -86,6 +172,25 @@ function Users(props) {
             Thêm Người Dùng
           </Button>
         </Link> */}
+        <Search
+          placeholder="Tìm kiếm theo SĐT"
+          allowClear
+          onPressEnter={(e) => {
+            setLoading(true)
+            setSearch(e.target.value)
+            findUser(e.target.value, 1).then((res) => {
+              setData(res.data.data)
+              setLoading(false)
+              setPagination({
+                ...pagination,
+                current: res.data.current,
+                pageSize: res.data.per_page,
+                total: res.data.total,
+              })
+            })
+          }}
+          style={{ width: 200 }}
+        />
       </header>
       <Table
         columns={columns}

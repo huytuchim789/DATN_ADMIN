@@ -12,3 +12,6 @@ export const updateUser = (id, name, phoneNumber, role) => {
     role,
   })
 }
+export const findUser = (phoneNumber,page) => {
+  return axios.get('./users/search', { params: { phone_number: phoneNumber ,page} })
+}

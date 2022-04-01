@@ -23,13 +23,13 @@ const { Header, Sider, Content } = Layout
 const nav = [
   {
     key: 1,
-    icon: <EnvironmentOutlined />,
+    icon: <EnvironmentOutlined className="icon-antd" />,
     text: 'Thành Phố',
     link: '/home/cities',
   },
   {
     key: 2,
-    icon: <UserOutlined />,
+    icon: <UserOutlined className="icon-antd" />,
     text: 'Người Dùng',
     link: '/home/users',
   },
@@ -79,9 +79,15 @@ const Navigation = ({ content }) => {
             style={{ padding: 0 }}
           >
             {collapsed ? (
-              <MenuUnfoldOutlined className="trigger" onClick={toggle} />
+              <MenuUnfoldOutlined
+                className="trigger icon-antd"
+                onClick={toggle}
+              />
             ) : (
-              <MenuFoldOutlined className="trigger" onClick={toggle} />
+              <MenuFoldOutlined
+                className="trigger icon-antd"
+                onClick={toggle}
+              />
             )}
 
             <Dropdown
