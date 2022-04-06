@@ -2,14 +2,22 @@ import axios from 'axios'
 export const getCities = (page) => {
   return axios.get('./cities-fb-groups', { params: { page } })
 }
-export const createCity = (name, groupID) => {
-  return axios.post('./cities/create', { name, group_id: groupID })
+export const createCity = (name, publicGroupID, privateGroupID) => {
+  return axios.post('./cities/create', {
+    name,
+    public_group: publicGroupID,
+    private_group: privateGroupID,
+  })
 }
 export const getCity = (id) => {
   return axios.get(`./cities/edit/${id}`)
 }
-export const updateCity = (id, name, groupID) => {
-  return axios.post(`./cities/edit/${id}`, { name, group_id: groupID })
+export const updateCity = (id, name, publicGroupID, privateGroupID) => {
+  return axios.post(`./cities/edit/${id}`, {
+    name,
+    public_group: publicGroupID,
+    private_group: privateGroupID,
+  })
 }
 
 export const deleteGroup = (id) => {

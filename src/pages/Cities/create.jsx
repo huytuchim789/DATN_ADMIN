@@ -17,15 +17,18 @@ const { Option } = Select
 
 const CityCreate = () => {
   const [loading, setLoading] = useState(false)
-  const children = []
-  for (let i = 10; i < 36; i++) {
-    children.push(
-      <Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>
-    )
-  }
+  // const children = []
+  // for (let i = 10; i < 36; i++) {
+  //   children.push(
+  //     <Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>
+  //   )
+  // }
 
-  function handleChange(value) {
-    formik.setFieldValue('groupID', value)
+  function handleChangePrivate(value) {
+    formik.setFieldValue('privateGroupID', value)
+  }
+  function handleChangePublic(value) {
+    formik.setFieldValue('publicGroupID', value)
   }
   function showConfirm(values) {
     Modal.confirm({
@@ -37,19 +40,18 @@ const CityCreate = () => {
         formik
           .submitForm()
           .then(() => {
-            const { name, groupID } = formik.values
-            console.log(name)
+            const { name, publicGroupID, privateGroupID } = formik.values
             setLoading(true)
-            createCity(name, groupID)
+            createCity(name, publicGroupID, privateGroupID)
               .then((res) => {
                 setLoading(false)
                 message.success('Thêm mới thành công')
-                navigate(-1)
+                // navigate(-1)
                 console.log(res)
               })
               .catch((err) => {
                 message.error('Thêm mới thất bại')
-                navigate(-1)
+                // navigate(-1)
               })
           })
           .catch((e) => {
@@ -66,14 +68,16 @@ const CityCreate = () => {
   const formik = useFormik({
     initialValues: {
       name: '',
-      groupID: [],
+      publicGroupID: [],
+      privateGroupID: [],
     },
 
     validationSchema: Yup.object({
       name: Yup.string()
         .required('Bạn chưa tên thành phố')
         .max(100, 'Tên thành phố không được quá 100 kí tự'),
-      groupID: Yup.array().min(1, 'Bạn chưa nhập groupID'),
+      publicGroupID: Yup.array(),
+      privateGroupID: Yup.array(),
     }),
     validateOnChange: true,
     validateOnBlur: false,
@@ -104,37 +108,45 @@ const CityCreate = () => {
           {formik.touched.name && formik.errors.name ? (
             <div className="error-message">{formik.errors.name}</div>
           ) : null}
-          <Title level={4} htmlFor="name">
-            Groups Facebook ID
+          <Title level={4} htmlFor="groupID">
+            Groups Facebook ID Public
           </Title>
-          {/* <Input
-            id="groupID"
-            name="groupID"
-            placeholder="Group Facebook ID"
-            size="large"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.groupID}
-            iconRender={(visible) =>
-              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-            }
-          /> */}
           <Select
             mode="tags"
             style={{ width: '100%' }}
-            placeholder="Groups ID"
+            placeholder="Groups ID Public"
             size="large"
             id="groupID"
-            name="groupID"
-            onChange={handleChange}
+            name="publicGroupID"
+            onChange={handleChangePublic}
             onBlur={formik.handleBlur}
-            value={formik.values.groupID}
+            value={formik.values.publicGroupID}
             open={false}
           >
-            {children}
+            {/* {children} */}
           </Select>
-          {formik.touched.groupID && formik.errors.groupID ? (
-            <div className="error-message">{formik.errors.groupID}</div>
+          {formik.touched.publicGroupID && formik.errors.publicGroupID ? (
+            <div className="error-message">{formik.errors.publicGroupID}</div>
+          ) : null}
+          <Title level={4} htmlFor="groupID">
+            Groups Facebook ID Private
+          </Title>
+          <Select
+            mode="tags"
+            style={{ width: '100%' }}
+            placeholder="Groups ID Private"
+            size="large"
+            id="groupID"
+            name="privateGroupID"
+            onChange={handleChangePrivate}
+            onBlur={formik.handleBlur}
+            value={formik.values.privateGroupID}
+            open={false}
+          >
+            {/* {children} */}
+          </Select>
+          {formik.touched.privateGroupID && formik.errors.privateGroupID ? (
+            <div className="error-message">{formik.errors.privateGroupID}</div>
           ) : null}
           <Space style={{ marginTop: '30px' }}>
             <Button

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Table, Space, Button, message, Popconfirm } from 'antd'
 import { deleteGroup, getCities } from '../../api/Cities'
 import { Link } from 'react-router-dom'
-import { Typography, Divider } from 'antd'
+import { Typography, Divider, Tag } from 'antd'
 
 import { Navigate, useNavigate } from 'react-router-dom'
 
@@ -101,6 +101,19 @@ function Cities(props) {
         title: 'Facebook Group ID',
         dataIndex: 'facebook_group_id',
         key: 'facebook_group_id',
+      },
+      {
+        title: 'Type',
+        key: 'type',
+        dataIndex: 'public',
+        render: (text, record) => {
+          console.log('here', record)
+          return record.public ? (
+            <Tag color="cyan">Public</Tag>
+          ) : (
+            <Tag color="black">Private</Tag>
+          )
+        },
       },
       {
         title: 'Hành Động',
