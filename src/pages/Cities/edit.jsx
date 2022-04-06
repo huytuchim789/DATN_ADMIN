@@ -9,7 +9,7 @@ import { login } from '../../api/Login'
 import { UserContext } from '../../context/AuthContext'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Typography, Divider, message, Spin, Modal, Skeleton } from 'antd'
-import { createCity, getCity } from '../../api/Cities'
+import { createCity, getCity, updateCity } from '../../api/Cities'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { set } from 'date-fns'
 
@@ -52,7 +52,7 @@ const CityCreate = () => {
             const { name, groupID } = formik.values
             console.log(name)
             setLoading(true)
-            createCity(name, groupID)
+            updateCity(id, name, groupID)
               .then((res) => {
                 setLoading(false)
                 message.success('Thêm mới thành công')
