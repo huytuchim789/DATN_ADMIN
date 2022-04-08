@@ -19,6 +19,8 @@ import {
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../api/Login'
+import ScrollToTop from 'react-scroll-to-top'
+
 const { Header, Sider, Content } = Layout
 const nav = [
   {
@@ -117,6 +119,11 @@ const Navigation = ({ content }) => {
             }}
           >
             {content}
+            <ScrollToTop
+              smooth
+              color="yellow"
+              style={{ background: 'black' }}
+            />
           </Content>
         </Layout>
       </Layout>
