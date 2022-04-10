@@ -57,28 +57,6 @@ const columns = [
             if (record.role === 'member')
               return (
                 <Tag icon={<CheckCircleOutlined />} color="success">
-                  Đã Kích Hoạt
-                </Tag>
-              )
-            else if (
-              record.role === 'user' &&
-              getTimeRangeMilliseconds(record.expires_at) === 0
-            ) {
-              return (
-                <Tag icon={<CloseCircleOutlined />} color="error">
-                  Đã Hết Hạn
-                </Tag>
-              )
-            } else if (record.role === 'admin') {
-              return (
-                <Tag color="cyan" icon={<UsergroupDeleteOutlined />}>
-                  admin
-                </Tag>
-              )
-            }
-            return (
-              <div className="datetime_countdown">
-                <div className="datetime_item">
                   <span
                     className="datetime_value"
                     style={{ color: days < 3 ? 'red' : 'initial' }}
@@ -91,9 +69,22 @@ const columns = [
                   >
                     Ngày
                   </span>
-                </div>
-              </div>
-            )
+                </Tag>
+              )
+            else if (record.role === 'user') {
+              return (
+                <Tag icon={<CloseCircleOutlined />} color="error">
+                  Chưa Kích Hoạt
+                </Tag>
+              )
+            } else if (record.role === 'admin') {
+              return (
+                <Tag color="cyan" icon={<UsergroupDeleteOutlined />}>
+                  admin
+                </Tag>
+              )
+            }
+            return <></>
           }}
         />
       )
