@@ -32,7 +32,7 @@ const EditUser = () => {
     getUser(id)
       .then((res) => {
         setLoading(false)
-        setData(res.data.data)
+        setData(res.data)
         console.log(res)
       })
       .catch((err) => {
@@ -41,32 +41,32 @@ const EditUser = () => {
       })
   }, [])
   const handleSelectChange = (e) => {
-    formik.setFieldValue('role', e)
+    formik.setFieldValue('admin', e)
   }
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
-      name: data.name,
-      phoneNumber: data.phone_number,
-      role: data.role,
+      username: data.username,
+      email: data.email,
+      admin: data.admin ? 'admin' : 'user',
     },
     enableReinitialize: true,
     validationSchema: Yup.object({
-      phoneNumber: Yup.string()
-        .min(10, 'Số điện thoại phải hơn 10 kí tự')
-        .max(100, 'SĐT không được quá 100 kí tự')
-        .required('Bạn chưa nhập sđt'),
-      name: Yup.string()
-        .required('Bạn chưa nhập tên user')
-        .max(100, 'Tên user không được quá 100 kí tự'),
+      username: Yup.string()
+        .min(6, 'Username phải hơn 6 kí tự')
+        .required('Bạn chưa nhập username'),
+      email: Yup.string()
+        .required('Bạn chưa nhập email')
+        .email('Email chưa đúng định dạng')
+        .max(100, 'Email không được quá 100 kí tự'),
     }),
-    validateOnChange: false,
-    validateOnBlur: false,
+    validateOnChange: true,
+    validateOnBlur: true,
     onSubmit: (values, { validate }) => {
       setSpinning(true)
-      const { name, phoneNumber, role } = values
+      const { username, email, admin } = values
       console.log(values)
-      updateUser(id, name, phoneNumber, role)
+      updateUser(id, username, email, admin === 'admin' ? true : false)
         .then((res) => {
           setSpinning(false)
           message.success('Sửa thành công')
@@ -78,6 +78,7 @@ const EditUser = () => {
         })
     },
   })
+  console.log(formik.errors)
   return (
     <>
       {loading ? (
@@ -93,42 +94,42 @@ const EditUser = () => {
               className="cities__create__form"
             >
               <Title level={4} htmlFor="">
-                Số Điện Thoại
+                Username
               </Title>
               <Input
                 id="phone"
-                name="phoneNumber"
+                name="username"
                 placeholder="Tên Người Dùng"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.phoneNumber}
+                value={formik.values.username}
               />
-              {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-                <div className="error-message">{formik.errors.phoneNumber}</div>
+              {formik.errors.username ? (
+                <div className="error-message">{formik.errors.username}</div>
               ) : null}
-              <Title level={4} htmlFor="name">
-                Tên Người Dùng
+              <Title level={4} htmlFor="email">
+                Email
               </Title>
               <Input
-                id="name"
-                name="name"
-                placeholder="Tên Người Dùng"
+                id="email"
+                name="email"
+                placeholder="Email"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.name}
+                value={formik.values.email}
               />
-              {formik.touched.name && formik.errors.name ? (
-                <div className="error-message">{formik.errors.name}</div>
+              {formik.errors.email ? (
+                <div className="error-message">{formik.errors.email}</div>
               ) : null}
               <Title level={4} htmlFor="role">
                 Quyền
               </Title>
               <Select
-                value={formik.values.role}
+                value={formik.values.admin}
                 style={{ width: 120 }}
                 id="role"
                 name="role"
@@ -137,11 +138,10 @@ const EditUser = () => {
                 // onBlur={formik.handleBlur}
               >
                 <Option value="admin">Admin</Option>
-                <Option value="member">Member</Option>
                 <Option value="user">User</Option>
               </Select>
-              {formik.touched.name && formik.errors.name ? (
-                <div className="error-message">{formik.errors.name}</div>
+              {formik.errors.admin ? (
+                <div className="error-message">{formik.errors.admin}</div>
               ) : null}
 
               {/* <Title level={4} htmlFor="password">
@@ -168,6 +168,7 @@ const EditUser = () => {
                   type="primary"
                   htmlType="submit"
                   size="large"
+                  disabled={!formik.isValid || !formik.dirty}
                 >
                   Lưu
                 </Button>

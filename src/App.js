@@ -6,9 +6,9 @@ import './sass/app.scss'
 import { Layout, Menu } from 'antd'
 import Home from './pages/Home'
 import PrivateRouter from './components/PrivateRouter'
-import Cities from './pages/Cities'
-import CityCreate from './pages/Cities/create'
-import EditCity from './pages/Cities/edit'
+import Cities from './pages/Products'
+import CityCreate from './pages/Products/create'
+import EditCity from './pages/Products/edit'
 import Users from './pages/Users'
 import EditUser from './pages/Users/edit'
 
@@ -26,7 +26,7 @@ const App = () => {
               </PrivateRouter>
             }
           /> */}
-          <Route path="cities">
+          <Route path="products">
             <Route
               path=""
               element={

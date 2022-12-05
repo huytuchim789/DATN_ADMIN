@@ -10,6 +10,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   UsergroupDeleteOutlined,
+  MehOutlined,
 } from '@ant-design/icons'
 import Countdown from 'react-countdown'
 import { getTimeRangeMilliseconds } from './../../utils/getTimeRange'
@@ -18,89 +19,51 @@ const { Title } = Typography
 const { Search } = Input
 const columns = [
   {
-    title: 'Số Điện Thoại',
-    dataIndex: 'phone_number',
+    title: 'Username',
+    dataIndex: 'username',
     width: '20%',
-    // filterDropdown: () => {
-    //   return (
-
-    //   )
-    // },
-    // filterIcon: () => {
-    //   return <SearchOutlined className="icon-antd" />
-    // },
   },
   {
-    title: 'Tên',
-    dataIndex: 'name',
+    title: 'Email',
+    dataIndex: 'email',
     width: '20%',
   },
   {
     title: 'Quyền',
-    dataIndex: 'role',
+    dataIndex: 'admin',
     width: '20%',
     filters: [
-      { text: 'Admin', value: 'admin' },
-      { text: 'Member', value: 'member' },
-      { text: 'User', value: 'user' },
+      { text: 'Admin', value: true },
+      { text: 'User', value: false },
     ],
-  },
-  {
-    title: 'Thời Hạn',
-    dataIndex: 'expires_at',
-    width: '20%',
     render: (text, record) => {
-      return (
-        <Countdown
-          date={Date.now() + getTimeRangeMilliseconds(record.expires_at)}
-          renderer={({ days, hours, minutes, seconds }) => {
-            if (record.role === 'member')
-              return (
-                <Tag icon={<CheckCircleOutlined />} color="success">
-                  <span
-                    className="datetime_value"
-                    style={{ color: days < 3 ? 'red' : 'initial' }}
-                  >
-                    {days}{' '}
-                  </span>
-                  <span
-                    className="datetime_label"
-                    style={{ color: days < 3 ? 'red' : 'initial' }}
-                  >
-                    Ngày
-                  </span>
-                </Tag>
-              )
-            else if (record.role === 'user') {
-              return (
-                <Tag icon={<CloseCircleOutlined />} color="error">
-                  Chưa Kích Hoạt
-                </Tag>
-              )
-            } else if (record.role === 'admin') {
-              return (
-                <Tag color="cyan" icon={<UsergroupDeleteOutlined />}>
-                  admin
-                </Tag>
-              )
-            }
-            return <></>
-          }}
-        />
-      )
+      if (!record.admin) {
+        return (
+          <Tag icon={<MehOutlined />} color="gold">
+            User
+          </Tag>
+        )
+      } else {
+        return (
+          <Tag color="cyan" icon={<UsergroupDeleteOutlined />}>
+            Admin
+          </Tag>
+        )
+      }
     },
   },
+
   {
     title: 'Hành Động',
     key: 'action',
     render: (text, record) => (
       <Space size="small">
-        {record.role !== 'admin' ? (
+        {!record.admin ? (
           <>
-            <Link to={`edit/${record.id}`}>
+            <Link to={`edit/${record._id}`}>
               <Button type="primary">Sửa</Button>
             </Link>
-            <Link to={`delete/${record.id}`}>
+            <Link to={`delete/${record._id}`}>
               <Button type="danger" disabled>
                 Xóa
               </Button>
@@ -119,14 +82,9 @@ function Users(props) {
   useEffect(() => {
     setLoading(true)
     getUsers(pagination.current).then((res) => {
-      setData(res.data.data)
+      console.log(res)
+      setData(res.data)
       setLoading(false)
-      setPagination({
-        ...pagination,
-        current: res.data.current,
-        pageSize: res.data.per_page,
-        total: res.data.total,
-      })
     })
   }, [])
   let handleTableChange = useCallback((pagination, filters, sorter) => {
@@ -135,8 +93,6 @@ function Users(props) {
     if (search) {
       findUser(search, pagination.current)
         .then((res) => {
-          console.log('search')
-
           setLoading(false)
           setData(res.data.data)
         })
@@ -146,7 +102,6 @@ function Users(props) {
     }
     getUsers(pagination.current)
       .then((res) => {
-        console.log('frist')
         setLoading(false)
         setData(res.data.data)
       })
@@ -164,22 +119,12 @@ function Users(props) {
           </Button>
         </Link> */}
         <Search
-          placeholder="Tìm kiếm theo SĐT"
+          placeholder="Tìm kiếm theo email"
           allowClear
-          onPressEnter={(e) => {
-            setLoading(true)
-            setSearch(e.target.value)
-            findUser(e.target.value, 1).then((res) => {
-              setData(res.data.data)
-              setLoading(false)
-              setPagination({
-                ...pagination,
-                current: res.data.current,
-                pageSize: res.data.per_page,
-                total: res.data.total,
-              })
-            })
-          }}
+          // onPressEnter={(e) => {
+          //   setLoading(true)
+          //   setSearch(e.target.value)
+          // }}
           style={{ width: 200 }}
         />
       </header>
@@ -187,9 +132,9 @@ function Users(props) {
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={data}
-        pagination={pagination}
+        // pagination={pagination}
         loading={loading}
-        onChange={handleTableChange}
+        // onChange={handleTableChange}
       />
     </div>
   )

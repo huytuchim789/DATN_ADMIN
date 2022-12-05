@@ -1,6 +1,6 @@
 import axios from 'axios'
 export const getCities = (page) => {
-  return axios.get('./cities-fb-groups', { params: { page } })
+  return axios.get('./product', { params: { page } })
 }
 export const createCity = (name, publicGroupID, privateGroupID) => {
   return axios.post('./cities/create', {

@@ -11,13 +11,13 @@ const { Title } = Typography
 
 const columns = [
   {
-    title: 'Thành Phố',
-    dataIndex: 'name',
+    title: 'Tiêu đề',
+    dataIndex: 'title',
     width: '30%',
   },
   {
-    title: 'Group ID',
-    dataIndex: 'facebook_group_id',
+    title: 'Miêu tả',
+    dataIndex: 'desc',
     width: '30%',
   },
   {
@@ -158,10 +158,10 @@ function Cities(props) {
         columns={columns}
         rowKey={(record) => record.id}
         dataSource={data}
-        pagination={pagination}
+        // pagination={pagination}
         loading={loading}
         expandable={{ expandedRowRender }}
-        onChange={handleTableChange}
+        // onChange={handleTableChange}
       />
     </div>
   )

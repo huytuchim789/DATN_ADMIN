@@ -18,14 +18,13 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      phoneNumber: '',
+      username: '',
       password: '',
     },
 
     validationSchema: Yup.object({
-      phoneNumber: Yup.string()
-        .min(10, 'Số điện thoại phải hơn 10 kí tự')
-        .max(100, 'SĐT không được quá 100 kí tự')
+      username: Yup.string()
+        .min(6, 'Username phải hơn 6 kí tự')
         .required('Bạn chưa nhập sđt'),
       password: Yup.string()
         .required('Bạn chưa nhập password')
@@ -36,24 +35,23 @@ const Login = () => {
     validateOnBlur: false,
     onSubmit: (values, { validate }) => {
       setSpinning(true)
-      const { phoneNumber, password } = values
-      login(phoneNumber, password)
+      const { username, password } = values
+      login(username, password)
         .then((res) => {
+          console.log(res)
           setSpinning(false)
-          setAuth(res.data.data)
-          localStorage.setItem('auth', JSON.stringify(res.data.data))
-          axios.defaults.headers.common = {
-            Authorization: `bearer ${
-              JSON.parse(localStorage.getItem('auth')).access_token
-            }`,
-          }
+          setAuth(res.data)
+          localStorage.setItem('auth', JSON.stringify(res.data))
+          axios.defaults.headers.token = `bearer ${
+            JSON.parse(localStorage.getItem('auth')).accessToken
+          }`
           navigate('/home')
         })
         .catch((err) => {
           setSpinning(false)
 
           if (err.response.status === 401) {
-            message.error('SĐT hoặc mật khẩu không đúng')
+            message.error('Username hoặc mật khẩu không đúng')
           } else if (err.response.status === 403) {
             message.error(
               'Chỉ có admin mới có thể truy cập vào trang này xin vui lòng liên hệ admin'
@@ -68,19 +66,19 @@ const Login = () => {
         <div className="login">
           <img src={logo} alt="" />
           <form onSubmit={formik.handleSubmit} className="login__form">
-            <label htmlFor="phoneNumber">Phone</label>
+            <label htmlFor="username">Username</label>
             <Input
-              id="phoneNumber"
-              name="phoneNumber"
-              placeholder="Số Điện Thoại"
+              id="username"
+              name="username"
+              placeholder="Username"
               type="text"
               size="large"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              value={formik.values.phoneNumber}
+              value={formik.values.username}
             />
-            {formik.touched.phoneNumber && formik.errors.phoneNumber ? (
-              <div className="error-message">{formik.errors.phoneNumber}</div>
+            {formik.touched.username && formik.errors.username ? (
+              <div className="error-message">{formik.errors.username}</div>
             ) : null}
             <label htmlFor="password">Password</label>
             <Input.Password
