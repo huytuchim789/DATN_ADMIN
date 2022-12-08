@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Table, Space, Button, message, Popconfirm } from 'antd'
-import { deleteGroup, getCities } from '../../api/Cities'
+import { deleteGroup, getCities, getProducts } from '../../api/Cities'
 import { Link } from 'react-router-dom'
-import { Typography, Divider, Tag } from 'antd'
+import { Typography, Divider, Tag, Image } from 'antd'
 
 import { Navigate, useNavigate } from 'react-router-dom'
 
@@ -13,25 +13,66 @@ const columns = [
   {
     title: 'Tiêu đề',
     dataIndex: 'title',
-    width: '30%',
   },
   {
     title: 'Miêu tả',
     dataIndex: 'desc',
-    width: '30%',
+  },
+  {
+    title: 'Hình ảnh',
+    dataIndex: 'img',
+    render: (text, record) => <Image width={200} src={record.img} />,
+  },
+  {
+    title: 'Categories',
+    dataIndex: 'categories',
+    render: (text, record) => {
+      return record.categories.map((m) => <Tag color="green">{m}</Tag>)
+    },
+  },
+  {
+    title: 'Size',
+    dataIndex: 'size',
+  },
+  {
+    title: 'Ingredient',
+    dataIndex: 'ingredient',
+    render: (text, record) => {
+      return record.ingredient.map((m) => <Tag color="volcano">{m}</Tag>)
+    },
+  },
+  {
+    title: 'Recommend',
+    dataIndex: 'recommend',
+    render: (text, record) => {
+      return record.recommend.map((m) => <Tag color="green">{m}</Tag>)
+    },
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+  },
+  {
+    title: 'Quanity',
+    dataIndex: 'quantity',
+  },
+  {
+    title: 'Favorite',
+    dataIndex: 'favorite',
+    render: (text, record) => {
+      return record.favorite.map((m) => <Tag color="green">{m}</Tag>)
+    },
   },
   {
     title: 'Hành Động',
     key: 'action',
     render: (text, record) => (
       <Space size="small">
-        <Link to={`edit/${record.id}`}>
+        <Link to={`edit/${record._id}`}>
           <Button type="primary">Sửa </Button>
         </Link>
-        <Link to={`delete/${record.id}`}>
-          <Button disabled type="danger">
-            Xóa
-          </Button>
+        <Link to={`delete/${record._id}`}>
+          <Button type="danger">Xóa</Button>
         </Link>
       </Space>
     ),
@@ -44,123 +85,33 @@ function Cities(props) {
   const navigate = useNavigate()
   useEffect(() => {
     setLoading(true)
-    getCities(pagination.current).then((res) => {
-      console.log(res.data.data)
-      res.data.data = res.data.data.map((e) => {
-        e.key = e.id
-        return e
-      })
-      setData(res.data.data)
+    getProducts().then((res) => {
+      console.log(res)
+
+      setData(res.data)
       setLoading(false)
-      setPagination({
-        ...pagination,
-        pageSize: res.data.per_page,
-        total: res.data.total,
-      })
     })
   }, [])
-  const handleTableChange = (pagination, filters, sorter) => {
-    setLoading(true)
-    getCities(pagination.current)
-      .then((res) => {
-        setLoading(false)
-        setData(res.data.data)
-        console.log(res)
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  }
-  const handleDelete = (record, row) => {
-    setLoading(true)
-    deleteGroup(record.id)
-      .then((res) => {
-        message.success('Xóa Thành Công')
-        navigate(0)
-
-        // const newData = [...data]
-        // newData.forEach((e) => {
-        //   if (e.id === row.id) {
-        //     e.groups.forEach((r, index) => {
-        //       if (r.id === record.id) {
-        //         e.groups.splice(index, 1)
-        //       }
-        //     })
-        //   }
-        // })
-        // console.log(newData)
-      })
-      .catch((e) => {
-        message.error('Xóa Thất Bại')
-        setLoading(false)
-      })
-  }
-  const expandedRowRender = (row) => {
-    const columns = [
-      {
-        title: 'Facebook Group ID',
-        dataIndex: 'facebook_group_id',
-        key: 'facebook_group_id',
-      },
-      {
-        title: 'Type',
-        key: 'type',
-        dataIndex: 'public',
-        render: (text, record) => {
-          console.log('here', record)
-          return record.public ? (
-            <Tag color="cyan">Public</Tag>
-          ) : (
-            <Tag color="black">Private</Tag>
-          )
-        },
-      },
-      {
-        title: 'Hành Động',
-        key: 'action',
-        render: (text, record) => (
-          <Space size="small">
-            <Link to={`edit/${record.id}`}>
-              <Button disabled type="primary">
-                Sửa
-              </Button>
-            </Link>
-            <Popconfirm
-              title="Bạn có chắc chắn muốn xóa?"
-              onConfirm={() => {
-                handleDelete(record, row)
-              }}
-              okText="Có"
-              cancelText="Không"
-            >
-              <Button type="danger">Xóa</Button>
-            </Popconfirm>
-          </Space>
-        ),
-      },
-    ]
-
-    const inData = row.groups
-    console.log(inData)
-    return <Table columns={columns} dataSource={inData} pagination={false} />
-  }
   return (
     <div className="cities">
       <header>
-        <Title level={1}>Thành Phố</Title>
+        <Title level={1}>Sản Phẩm</Title>
         <Link to="create">
           <Button type="primary" size="large">
-            Thêm Thành Phố
+            Thêm Sản Phẩm
           </Button>
         </Link>
       </header>
       <Table
         columns={columns}
-        rowKey={(record) => record.id}
+        rowKey={(record) => record._id}
         dataSource={data}
-        // pagination={pagination}
+        pagination={{
+          defaultCurrent: 1,
+          total: data.length,
+          defaultPageSize: 2,
+        }}
         loading={loading}
-        expandable={{ expandedRowRender }}
         // onChange={handleTableChange}
       />
     </div>

@@ -32,8 +32,8 @@ const nav = [
   {
     key: 2,
     icon: <UserOutlined className="icon-antd" />,
-    text: 'Người Dùng',
-    link: '/home/users',
+    text: 'Sản phẩm',
+    link: '/home/products',
   },
 ]
 const Navigation = ({ content }) => {
