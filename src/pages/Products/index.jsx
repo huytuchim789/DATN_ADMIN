@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { Table, Space, Button, message, Popconfirm } from 'antd'
-import { deleteGroup, getCities, getProducts } from '../../api/Cities'
+import {
+  deleteGroup,
+  deleteProduct,
+  getCities,
+  getProducts,
+} from '../../api/Cities'
 import { Link } from 'react-router-dom'
 import { Typography, Divider, Tag, Image } from 'antd'
 
@@ -71,9 +76,26 @@ const columns = [
         <Link to={`edit/${record._id}`}>
           <Button type="primary">Sửa </Button>
         </Link>
-        <Link to={`delete/${record._id}`}>
+        <Popconfirm
+          title="Bạn có chắc muốn xóa sản phẩm?"
+          onConfirm={() => {
+            deleteProduct(record._id)
+              .then((res) => {
+                message.success('Xóa thành công')
+                setTimeout(() => {
+                  window.location.reload()
+                }, 1000)
+                console.log(res)
+              })
+              .catch((err) => {
+                message.error('Xóa thất bại', err)
+              })
+          }}
+          okText="Yes"
+          cancelText="No"
+        >
           <Button type="danger">Xóa</Button>
-        </Link>
+        </Popconfirm>
       </Space>
     ),
   },

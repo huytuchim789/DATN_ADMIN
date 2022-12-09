@@ -12,6 +12,6 @@ export const updateProduct = (id, data) => {
   return axios.put(`./product/${id}`, { ...data })
 }
 
-export const deleteGroup = (id) => {
-  return axios.delete(`./fb-group/${id}`)
+export const deleteProduct = (id) => {
+  return axios.delete(`./product/${id}`)
 }
