@@ -6,11 +6,12 @@ import './sass/app.scss'
 import { Layout, Menu } from 'antd'
 import Home from './pages/Home'
 import PrivateRouter from './components/PrivateRouter'
-import Cities from './pages/Products'
-import CityCreate from './pages/Products/create'
-import EditCity from './pages/Products/edit'
+import Products from './pages/Products'
+
 import Users from './pages/Users'
 import EditUser from './pages/Users/edit'
+import ProductEdit from './pages/Products/edit'
+import ProductCreate from './pages/Products/create'
 
 const App = () => {
   return (
@@ -31,7 +32,7 @@ const App = () => {
               path=""
               element={
                 <PrivateRouter>
-                  <Cities />
+                  <Products />
                 </PrivateRouter>
               }
             ></Route>
@@ -39,7 +40,7 @@ const App = () => {
               path="create"
               element={
                 <PrivateRouter>
-                  <CityCreate />
+                  <ProductCreate />
                 </PrivateRouter>
               }
             />
@@ -47,7 +48,7 @@ const App = () => {
               path="edit/:id"
               element={
                 <PrivateRouter>
-                  <EditCity />
+                  <ProductEdit />
                 </PrivateRouter>
               }
             />

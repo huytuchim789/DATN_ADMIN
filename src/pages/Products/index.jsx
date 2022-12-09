@@ -78,7 +78,7 @@ const columns = [
     ),
   },
 ]
-function Cities(props) {
+function Products(props) {
   const [data, setData] = useState([])
   const [pagination, setPagination] = useState({ current: 1, pageSize: 0 })
   const [loading, setLoading] = useState(false)
@@ -118,6 +118,6 @@ function Cities(props) {
   )
 }
 
-Cities.propTypes = {}
+Products.propTypes = {}
 
-export default Cities
+export default Products

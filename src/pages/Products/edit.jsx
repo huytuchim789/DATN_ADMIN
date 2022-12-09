@@ -22,7 +22,7 @@ import { set } from 'date-fns'
 const { Title } = Typography
 const { Option } = Select
 
-const CityCreate = () => {
+const ProductEdit = () => {
   let { id } = useParams()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState({})
@@ -295,4 +295,4 @@ const CityCreate = () => {
     </>
   )
 }
-export default CityCreate
+export default ProductEdit

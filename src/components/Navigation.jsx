@@ -26,14 +26,14 @@ const nav = [
   {
     key: 1,
     icon: <EnvironmentOutlined className="icon-antd" />,
-    text: 'Thành Phố',
-    link: '/home/cities',
+    text: 'Sản phẩm',
+    link: '/home/products',
   },
   {
     key: 2,
     icon: <UserOutlined className="icon-antd" />,
-    text: 'Sản phẩm',
-    link: '/home/products',
+    text: 'Người dùng',
+    link: '/home/users',
   },
 ]
 const Navigation = ({ content }) => {
@@ -53,6 +53,10 @@ const Navigation = ({ content }) => {
         navigate(0, { replace: true })
       })
       .catch(() => {
+        setSpinning(false)
+        localStorage.removeItem('auth')
+        navigate(0, { replace: true })
+
         message.error('Xảy ra lỗi xin vui lòng thử lại')
       })
   }
