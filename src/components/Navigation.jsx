@@ -15,6 +15,9 @@ import {
   VideoCameraOutlined,
   UploadOutlined,
   EnvironmentOutlined,
+  PlaySquareOutlined,
+  ShoppingOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -26,14 +29,32 @@ const nav = [
   {
     key: 1,
     icon: <EnvironmentOutlined className="icon-antd" />,
-    text: 'Sản phẩm',
+    text: 'Products',
     link: '/home/products',
   },
   {
     key: 2,
     icon: <UserOutlined className="icon-antd" />,
-    text: 'Người dùng',
+    text: 'Users',
     link: '/home/users',
+  },
+  {
+    key: 3,
+    icon: <PlaySquareOutlined className="icon-antd" />,
+    text: 'News',
+    link: '/home/news',
+  },
+  {
+    key: 4,
+    icon: <ShoppingOutlined className="icon-antd" />,
+    text: 'Orders',
+    link: '/home/orders',
+  },
+  {
+    key: 5,
+    icon: <BarChartOutlined className="icon-antd" />,
+    text: 'Income Chart',
+    link: '/home/income',
   },
 ]
 const Navigation = ({ content }) => {
