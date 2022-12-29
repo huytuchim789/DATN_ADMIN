@@ -11,65 +11,57 @@ import { Link } from 'react-router-dom'
 import { Typography, Divider, Tag, Image } from 'antd'
 
 import { Navigate, useNavigate } from 'react-router-dom'
+import { getNews } from '../../api/News'
 
 const { Title } = Typography
 
 const columns = [
   {
-    title: 'Tiêu đề',
-    dataIndex: 'title',
+    title: 'Main Title',
+    dataIndex: 'mainTitle',
   },
   {
-    title: 'Miêu tả',
-    dataIndex: 'desc',
+    title: 'Main Image',
+    dataIndex: 'mainImage',
+    render: (text, record) => <Image width={200} src={record.mainImage} />,
   },
   {
-    title: 'Hình ảnh',
-    dataIndex: 'img',
-    render: (text, record) => <Image width={200} src={record.img} />,
+    title: 'Header Image',
+    dataIndex: 'headerImage',
+    render: (text, record) => <Image width={200} src={record.headerImage} />,
   },
   {
-    title: 'Categories',
-    dataIndex: 'categories',
-    render: (text, record) => {
-      return record.categories.map((m) => <Tag color="green">{m}</Tag>)
-    },
+    title: 'Body Image',
+    dataIndex: 'bodyImage',
+    render: (text, record) => <Image width={200} src={record.bodyImage} />,
   },
   {
-    title: 'Size',
-    dataIndex: 'size',
+    title: 'Note Image',
+    dataIndex: 'noteImage',
+    render: (text, record) => <Image width={200} src={record.noteImage} />,
   },
   {
-    title: 'Ingredient',
-    dataIndex: 'ingredient',
-    render: (text, record) => {
-      return record.ingredient.map((m) => <Tag color="volcano">{m}</Tag>)
-    },
+    title: 'Text Header',
+    dataIndex: 'textHeader',
   },
   {
-    title: 'Recommend',
-    dataIndex: 'recommend',
-    render: (text, record) => {
-      return record.recommend.map((m) => <Tag color="green">{m}</Tag>)
-    },
+    title: 'Text Body01',
+    dataIndex: 'textBody01',
   },
   {
-    title: 'Price',
-    dataIndex: 'price',
+    title: 'Text Body02',
+    dataIndex: 'textBody02',
   },
   {
-    title: 'Quanity',
-    dataIndex: 'quantity',
+    title: 'Text Body03',
+    dataIndex: 'textBody03',
   },
   {
-    title: 'Favorite',
-    dataIndex: 'favorite',
-    render: (text, record) => {
-      return record.favorite.map((m) => <Tag color="green">{m}</Tag>)
-    },
+    title: 'Text Quote',
+    dataIndex: 'textQuote',
   },
   {
-    title: 'Hành Động',
+    title: 'Actions',
     key: 'action',
     render: (text, record) => (
       <Space size="small">
@@ -100,14 +92,14 @@ const columns = [
     ),
   },
 ]
-function Products(props) {
+function News(props) {
   const [data, setData] = useState([])
   const [pagination, setPagination] = useState({ current: 1, pageSize: 0 })
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
   useEffect(() => {
     setLoading(true)
-    getProducts().then((res) => {
+    getNews().then((res) => {
       console.log(res)
 
       setData(res.data)
@@ -117,10 +109,10 @@ function Products(props) {
   return (
     <div className="cities">
       <header>
-        <Title level={1}>Sản Phẩm</Title>
+        <Title level={1}>News</Title>
         <Link to="create">
           <Button type="primary" size="large">
-            Thêm Sản Phẩm
+            Add News
           </Button>
         </Link>
       </header>
@@ -134,12 +126,13 @@ function Products(props) {
           defaultPageSize: 2,
         }}
         loading={loading}
+        scroll={{ x: 1200 }}
         // onChange={handleTableChange}
       />
     </div>
   )
 }
 
-Products.propTypes = {}
+News.propTypes = {}
 
-export default Products
+export default News

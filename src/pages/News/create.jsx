@@ -18,11 +18,13 @@ import {
 } from '../../api/Cities'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { set } from 'date-fns'
+import { createNew, getNew } from '../../api/News'
+import TextArea from 'antd/lib/input/TextArea'
 
 const { Title } = Typography
 const { Option } = Select
 
-const ProductEdit = () => {
+const NewCreate = () => {
   let { id } = useParams()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState({})
@@ -36,17 +38,17 @@ const ProductEdit = () => {
   // function handleChangePublic(value) {
   //   formik.setFieldValue('publicGroupID', value)
   // }
-  useEffect(() => {
-    setSke(true)
-    getProduct(id)
-      .then((res) => {
-        setSke(false)
-        setData(res.data)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }, [])
+  // useEffect(() => {
+  //   setSke(true)
+  //   getNew(id)
+  //     .then((res) => {
+  //       setSke(false)
+  //       setData(res.data)
+  //     })
+  //     .catch((err) => {
+  //       console.log(err)
+  //     })
+  // }, [])
   function showConfirm(values) {
     Modal.confirm({
       title: 'Xác Nhận',
@@ -57,15 +59,15 @@ const ProductEdit = () => {
           .submitForm()
           .then(() => {
             setLoading(true)
-            updateProduct(id, formik.values)
+            createNew(id, formik.values)
               .then((res) => {
                 setLoading(false)
-                message.success('Sửa thành công')
+                message.success('Added Successfully')
                 navigate(-1)
                 console.log(res)
               })
               .catch((err) => {
-                message.error('Sửa thất bại', err)
+                message.error('Add Failed', err)
                 navigate(-1)
                 setLoading(false)
               })
@@ -83,17 +85,16 @@ const ProductEdit = () => {
   const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
-      title: data.title,
-      desc: data.desc,
-      img: data.img,
-      categories: data.categories ? data.categories : [],
-      size: data.size,
-
-      ingredient: data.ingredient ? data.ingredient : [],
-      recommend: data.recommend ? data.recommend : [],
-      price: data.price,
-      quantity: data.quantity,
-      favorite: data.favorite ? data.favorite : [],
+      mainTitle: data.mainTitle,
+      mainImage: data.mainImage,
+      headerImage: data.headerImage,
+      bodyImage: data.bodyImage,
+      noteImage: data.noteImage,
+      textHeader: data.textHeader,
+      textBody01: data.textBody01,
+      textBody02: data.textBody02,
+      textBody03: data.textBody03,
+      textQuote: data.textQuote,
     },
     enableReinitialize: true,
 
@@ -118,155 +119,173 @@ const ProductEdit = () => {
         <Spin tip="Loading..." spinning={loading}>
           <div className="cities__create">
             <header>
-              <Title level={1}>Sửa Sản phẩm</Title>
+              <Title level={1}>Edit News</Title>
             </header>
             <form
               onSubmit={formik.handleSubmit}
               className="cities__create__form"
             >
               <Title level={4} htmlFor="name">
-                Tên Sản phẩm
+                News Title
               </Title>
               <Input
                 id="name"
-                name="title"
-                placeholder="Tên Sản phẩm"
+                name="mainTitle"
+                placeholder="Main Title"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.title}
+                value={formik.values.mainTitle}
               />
-              {formik.touched.title && formik.errors.title ? (
-                <div className="error-message">{formik.errors.title}</div>
+              {formik.touched.mainTitle && formik.errors.mainTitle ? (
+                <div className="error-message">{formik.errors.mainTitle}</div>
               ) : null}
               <Title level={4} htmlFor="name">
-                Mô tả Sản phẩm
+                Main Image
               </Title>
               <Input
                 id="name"
-                name="desc"
-                placeholder="Mô tả"
+                name="mainImage"
+                placeholder="Main Image"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.desc}
+                value={formik.values.mainImage}
               />
-              {formik.touched.desc && formik.errors.desc ? (
-                <div className="error-message">{formik.errors.desc}</div>
+              {formik.touched.mainImage && formik.errors.mainImage ? (
+                <div className="error-message">{formik.errors.mainImage}</div>
               ) : null}
               <Title level={4} htmlFor="name">
-                Ảnh Sản phẩm
+                Header Image
               </Title>
               <Input
                 id="name"
-                name="img"
-                placeholder="Link URI"
+                name="headerImage"
+                placeholder="Header Image"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.img}
+                value={formik.values.headerImage}
               />
-              {formik.touched.img && formik.errors.img ? (
-                <div className="error-message">{formik.errors.img}</div>
-              ) : null}
-              <Title level={4} htmlFor="groupID">
-                Categories
-              </Title>
-              <Select
-                mode="tags"
-                style={{ width: '100%' }}
-                placeholder="Categories"
-                size="large"
-                id="groupID"
-                name="categories"
-                onChange={(value) => {
-                  formik.setFieldValue('categories', value)
-                }}
-                onBlur={formik.handleBlur}
-                value={formik.values.categories}
-                open={false}
-              >
-                {/* {children} */}
-              </Select>
-              {formik.touched.categories && formik.errors.categories ? (
-                <div className="error-message">{formik.errors.categories}</div>
-              ) : null}
-              <Input
-                id="name"
-                name="size"
-                placeholder="Size"
-                type="text"
-                size="large"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.size}
-              />
-              {formik.touched.size && formik.errors.size ? (
-                <div className="error-message">{formik.errors.size}</div>
-              ) : null}
-              <Title level={4} htmlFor="groupID">
-                Ingredient
-              </Title>
-              <Select
-                mode="tags"
-                style={{ width: '100%' }}
-                placeholder="Ingredient"
-                size="large"
-                id="groupID"
-                name="ingredient"
-                onChange={(value) => {
-                  formik.setFieldValue('ingredient', value)
-                }}
-                onBlur={formik.handleBlur}
-                value={formik.values.ingredient}
-                open={false}
-              >
-                {/* {children} */}
-              </Select>
-              {formik.touched.ingredient && formik.errors.ingredient ? (
-                <div className="error-message">{formik.errors.ingredient}</div>
-              ) : null}{' '}
-              <Title level={4} htmlFor="groupID">
-                Recommend
-              </Title>
-              <Select
-                mode="tags"
-                style={{ width: '100%' }}
-                placeholder="Recommend"
-                size="large"
-                id="groupID"
-                name="recommend"
-                onChange={(value) => {
-                  formik.setFieldValue('recommend', value)
-                }}
-                onBlur={formik.handleBlur}
-                value={formik.values.recommend}
-                open={false}
-              >
-                {/* {children} */}
-              </Select>
-              {formik.touched.recommend && formik.errors.recommend ? (
-                <div className="error-message">{formik.errors.recommend}</div>
+              {formik.touched.headerImage && formik.errors.headerImage ? (
+                <div className="error-message">{formik.errors.headerImage}</div>
               ) : null}
               <Title level={4} htmlFor="name">
-                Giá Sản phẩm
+                Body Image
               </Title>
               <Input
                 id="name"
-                name="price"
-                placeholder="Giá"
+                name="bodyImage"
+                placeholder="Body Image"
                 type="text"
                 size="large"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.price}
+                value={formik.values.bodyImage}
               />
-              {formik.touched.price && formik.errors.price ? (
-                <div className="error-message">{formik.errors.price}</div>
+              {formik.touched.bodyImage && formik.errors.bodyImage ? (
+                <div className="error-message">{formik.errors.bodyImage}</div>
               ) : null}
+              <Title level={4} htmlFor="name">
+                Note Image
+              </Title>
+              <Input
+                id="name"
+                name="noteImage"
+                placeholder="Note Image"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.noteImage}
+              />
+              {formik.touched.noteImage && formik.errors.noteImage ? (
+                <div className="error-message">{formik.errors.noteImage}</div>
+              ) : null}
+              <Title level={4} htmlFor="name">
+                Text Header
+              </Title>
+              <TextArea
+                id="name"
+                name="textHeader"
+                placeholder="Text Header"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.textHeader}
+              />
+              {formik.touched.textHeader && formik.errors.textHeader ? (
+                <div className="error-message">{formik.errors.textHeader}</div>
+              ) : null}
+              <Title level={4} htmlFor="name">
+                Text Body01
+              </Title>
+              <TextArea
+                id="name"
+                name="textBody01"
+                placeholder="Text Body01"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.textBody01}
+              />
+              {formik.touched.textBody01 && formik.errors.textBody01 ? (
+                <div className="error-message">{formik.errors.textBody01}</div>
+              ) : null}
+              <Title level={4} htmlFor="name">
+                Text Body02
+              </Title>
+              <TextArea
+                id="name"
+                name="textBody02"
+                placeholder="Text Body02"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.textBody02}
+              />
+              {formik.touched.textBody02 && formik.errors.textBody02 ? (
+                <div className="error-message">{formik.errors.textBody02}</div>
+              ) : null}
+              <Title level={4} htmlFor="name">
+                Text Body03
+              </Title>
+              <TextArea
+                id="name"
+                name="textBody03"
+                placeholder="Text Body03"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.textBody03}
+              />
+              {formik.touched.textBody03 && formik.errors.textBody03 ? (
+                <div className="error-message">{formik.errors.textBody03}</div>
+              ) : null}
+              <Title level={4} htmlFor="name">
+                Text Quote
+              </Title>
+              <TextArea
+                id="name"
+                name="textQuote"
+                placeholder="Text Quote"
+                type="text"
+                size="large"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.textQuote}
+              />
+              {formik.touched.textQuote && formik.errors.textQuote ? (
+                <div className="error-message">{formik.errors.textQuote}</div>
+              ) : null}
+
               <Space style={{ marginTop: '30px' }}>
                 <Button
                   className="save_btn"
@@ -295,4 +314,4 @@ const ProductEdit = () => {
     </>
   )
 }
-export default ProductEdit
+export default NewCreate

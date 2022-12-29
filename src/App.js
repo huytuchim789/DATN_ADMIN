@@ -6,11 +6,17 @@ import './sass/app.scss'
 import { Layout, Menu } from 'antd'
 import Home from './pages/Home'
 import PrivateRouter from './components/PrivateRouter'
-import Cities from './pages/Products'
-import CityCreate from './pages/Products/create'
-import EditCity from './pages/Products/edit'
+import Products from './pages/Products'
+
 import Users from './pages/Users'
 import EditUser from './pages/Users/edit'
+import ProductEdit from './pages/Products/edit'
+import ProductCreate from './pages/Products/create'
+import News from './pages/News'
+import NewEdit from './pages/News/edit'
+import NewCreate from './pages/News/create'
+import Orders from './pages/Orders'
+import InCome from './pages/income'
 
 const App = () => {
   return (
@@ -31,7 +37,7 @@ const App = () => {
               path=""
               element={
                 <PrivateRouter>
-                  <Cities />
+                  <Products />
                 </PrivateRouter>
               }
             ></Route>
@@ -39,7 +45,7 @@ const App = () => {
               path="create"
               element={
                 <PrivateRouter>
-                  <CityCreate />
+                  <ProductCreate />
                 </PrivateRouter>
               }
             />
@@ -47,7 +53,7 @@ const App = () => {
               path="edit/:id"
               element={
                 <PrivateRouter>
-                  <EditCity />
+                  <ProductEdit />
                 </PrivateRouter>
               }
             />
@@ -69,6 +75,68 @@ const App = () => {
                 </PrivateRouter>
               }
             />
+          </Route>
+          <Route path="news">
+            <Route
+              path=""
+              element={
+                <PrivateRouter>
+                  <News />
+                </PrivateRouter>
+              }
+            ></Route>
+            <Route
+              path="edit/:id"
+              element={
+                <PrivateRouter>
+                  <NewEdit />
+                </PrivateRouter>
+              }
+            />{' '}
+            <Route
+              path="create"
+              element={
+                <PrivateRouter>
+                  <NewCreate />
+                </PrivateRouter>
+              }
+            />
+          </Route>
+          <Route path="orders">
+            <Route
+              path=""
+              element={
+                <PrivateRouter>
+                  <Orders />
+                </PrivateRouter>
+              }
+            ></Route>
+            <Route
+              path="edit/:id"
+              element={
+                <PrivateRouter>
+                  <NewEdit />
+                </PrivateRouter>
+              }
+            />{' '}
+            <Route
+              path="create"
+              element={
+                <PrivateRouter>
+                  <NewCreate />
+                </PrivateRouter>
+              }
+            />
+          </Route>
+          <Route path="income">
+            <Route
+              path=""
+              element={
+                <PrivateRouter>
+                  <InCome />
+                </PrivateRouter>
+              }
+            ></Route>
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />

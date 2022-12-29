@@ -108,7 +108,7 @@ const Login = () => {
           </form>
         </div>
       ) : (
-        <Navigate to="/home/cities" />
+        <Navigate to="/home/users" />
       )}
     </Spin>
   )
