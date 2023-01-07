@@ -83,8 +83,16 @@ const Navigation = ({ content }) => {
   }
   return (
     <Spin spinning={spinning}>
-      <Layout className="layout">
-        <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Layout
+        className="layout"
+        style={{ height: '100vh', overflow: 'hidden' }}
+      >
+        <Sider
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+          style={{ position: 'sticky', top: 0 }}
+        >
           <div className="logo" />
           <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
             {nav.map((e, index) => (
@@ -100,7 +108,7 @@ const Navigation = ({ content }) => {
             ))}
           </Menu>
         </Sider>
-        <Layout className="site-layout">
+        <Layout className="site-layout" style={{ overflowY: 'scroll' }}>
           <Header
             className="site-layout-background header"
             style={{ padding: 0 }}

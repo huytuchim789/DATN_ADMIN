@@ -56,6 +56,8 @@ const Login = () => {
             message.error(
               'Chỉ có admin mới có thể truy cập vào trang này xin vui lòng liên hệ admin'
             )
+          } else {
+            message.error(err.response.statusText)
           }
         })
     },
