@@ -18,6 +18,7 @@ import {
   PlaySquareOutlined,
   ShoppingOutlined,
   BarChartOutlined,
+  FieldTimeOutlined,
 } from '@ant-design/icons'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -55,6 +56,12 @@ const nav = [
     icon: <BarChartOutlined className="icon-antd" />,
     text: 'Income Chart',
     link: '/home/income',
+  },
+  {
+    key: 6,
+    icon: <FieldTimeOutlined className="icon-antd" />,
+    text: 'Comments',
+    link: '/home/comments',
   },
 ]
 const Navigation = ({ content }) => {

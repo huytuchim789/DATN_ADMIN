@@ -17,6 +17,8 @@ import NewEdit from './pages/News/edit'
 import NewCreate from './pages/News/create'
 import Orders from './pages/Orders'
 import InCome from './pages/income'
+import Comments from './pages/Comments'
+import CommentEdit from './pages/Comments/edit'
 
 const App = () => {
   return (
@@ -118,7 +120,7 @@ const App = () => {
                   <NewEdit />
                 </PrivateRouter>
               }
-            />{' '}
+            />
             <Route
               path="create"
               element={
@@ -127,6 +129,24 @@ const App = () => {
                 </PrivateRouter>
               }
             />
+          </Route>
+          <Route path="comments">
+            <Route
+              path=""
+              element={
+                <PrivateRouter>
+                  <Comments />
+                </PrivateRouter>
+              }
+            ></Route>
+            <Route
+              path="edit/:id"
+              element={
+                <PrivateRouter>
+                  <CommentEdit />
+                </PrivateRouter>
+              }
+            />{' '}
           </Route>
           <Route path="income">
             <Route
